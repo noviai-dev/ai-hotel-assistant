@@ -15,6 +15,6 @@ elif ! grep -qi 'no crontab for' "$ERROR_FILE"; then
     exit 1
 fi
 
-# Include the collection profile and any running one-off collection container.
-docker compose --profile collection down --remove-orphans
+# Include both scheduled jobs and any running one-off containers.
+docker compose --profile collection --profile marketing down --remove-orphans
 echo 'Schedule removed and Compose stopped. Database and backup files are preserved.'

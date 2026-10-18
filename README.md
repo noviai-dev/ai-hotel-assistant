@@ -1,6 +1,6 @@
 # 酒店 AI 助手项目骨架
 
-面向酒店经营团队的模块化 AI 助手，覆盖市场决策、GEO 品牌可见性和 AI 客服。当前为 MVP 项目骨架，外部数据与模型适配器均为接口占位，不能直接用于生产经营决策。
+面向酒店经营团队的模块化 AI 助手。竞品采集由 `backend/competitors.py` 负责；营销分析由独立的 Python + OpenAI API worker 负责，支持定时读取数据库和保存建议。GEO、客服和前端仍为规划或占位，营销建议需人工审核。
 
 ## 模块
 
@@ -15,23 +15,24 @@
 - Web：Next.js / TypeScript（前端目录为占位骨架）
 - 部署：Docker Compose（本地开发），生产部署方式待定
 
-## 本地启动（API）
+## 本地启动
 
 Linux / WSL 部署可使用启动与停止脚本（需要 Bash、Docker Compose v2，以及已安装并运行的 cron 服务）：
 
 ```bash
 chmod +x bin/start.sh bin/stop.sh
-# nohup ./bin/start.sh > start.log 2>&1 &
 ./bin/start.sh
 # 停止服务并移除定时任务
 ./bin/stop.sh
 ```
 
 运行前先在根目录 `.env` 配置 `POSTGRES_PASSWORD` 和 `APIFY_TOKEN`。
-`start.sh` 执行 `docker compose up -d`，并在当前用户的 crontab 注册每天 **05:00**
-执行 `docker compose run --build --rm competitors`，按部署机器本地时区计算
+`start.sh` 启动基础服务、初始化营销报告/邮件表，并在当前用户的 crontab 注册每天 **05:00**
+执行竞品采集、每天 **09:00** 执行 `docker compose run --build --rm -T marketing run`，生成报告后发送邮件。按部署机器本地时区计算
 （日本时间请将机器时区设为 `Asia/Tokyo`）。重复启动会更新本项目的任务，不会重复添加。
-采集日志追加到 `logs/competitors.log`；启动时不会立即采集，机器关闭期间错过的任务不会补跑。
+采集日志追加到 `logs/competitors.log`，营销和邮件日志追加到 `logs/marketing.log`；启动时不会立即采集或分析，机器关闭期间错过的任务不会补跑。
+需在 `.env` 配置营销模型、酒店、SMTP参数及 `MARKETING_EMAIL_ENABLED=true`。
+脚本会停止已有常驻营销worker，避免与cron重复调度；cron的09:00不受 `MARKETING_HOUR` 影响。
 请使用同一用户执行两个脚本；该用户需有 Docker 权限，cron 执行时 Docker 也必须运行。
 `stop.sh` 会停止包含采集任务在内的 Compose 容器，保留数据库和备份文件。
 
@@ -49,15 +50,22 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python -m marketing init-db
+python -m marketing run --dry-run
+python -m marketing run
+python -m marketing latest
 ```
 
-接口文档：`http://127.0.0.1:8000/docs`。当前只提供健康检查与模块占位端点。
+先配置 `.env` 中的 `MARKETING_HOTEL`、本地 `PG*` 变量，以及正式分析需要的 `OPENAI_API_KEY`、`OPENAI_MODEL`。
+目前入口为 CLI/定时 worker，没有启动 HTTP 服务。完整命令、报告结构和限制见 [营销服务说明](backend/MARKETING.md)。
+已有数据库先执行 `docker compose run --build --rm marketing init-db` 创建 `a_marketing_reports` 报告表。
+Docker 启动定时分析：`docker compose --profile marketing up -d --build marketing`，默认每天日本时间 09:00 执行。
 
 ## 目录
 
 ```text
 backend/app/       API、配置、模块服务与外部适配器
+backend/marketing/ 指标查询、OpenAI建议、报告存储与定时worker
 frontend/          Next.js 前端结构占位
 infra/             本地开发基础设施
  docs/              需求、架构、数据模型、API 与路线图
