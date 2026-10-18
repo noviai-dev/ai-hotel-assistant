@@ -1,4 +1,37 @@
 services:
+  marketing:
+    build:
+      context: ./backend
+    profiles: ["marketing"]
+    restart: unless-stopped
+    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["python", "-m", "marketing"]
+    command: ["schedule"]
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-postgres}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+      PGDATABASE: ${POSTGRES_DB:-postgres}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      MARKETING_HOTEL: ${MARKETING_HOTEL:-}
+      MARKETING_TIMEZONE: ${MARKETING_TIMEZONE:-Asia/Tokyo}
+      MARKETING_HOUR: ${MARKETING_HOUR:-9}
+      MARKETING_HORIZON_DAYS: ${MARKETING_HORIZON_DAYS:-60}
+      MARKETING_FRESHNESS_DAYS: ${MARKETING_FRESHNESS_DAYS:-7}
+      MARKETING_EMAIL_ENABLED: ${MARKETING_EMAIL_ENABLED:-false}
+      MARKETING_EMAIL_TO: ${MARKETING_EMAIL_TO:-}
+      MARKETING_EMAIL_FROM: ${MARKETING_EMAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURITY: ${SMTP_SECURITY:-ssl}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+
   competitors:
     build:
       context: ./backend
@@ -33,6 +66,8 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
       - ./backend/sql/002_create_tables.sql:/docker-entrypoint-initdb.d/002_create_tables.sql:ro
       - ./backend/sql/003_daily_prices.sql:/docker-entrypoint-initdb.d/003_daily_prices.sql:ro
+      - ./backend/sql/004_a_marketing_reports.sql:/docker-entrypoint-initdb.d/004_a_marketing_reports.sql:ro
+      - ./backend/sql/005_a_report_emails.sql:/docker-entrypoint-initdb.d/005_a_report_emails.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 10s

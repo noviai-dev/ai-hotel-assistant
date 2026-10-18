@@ -9,6 +9,7 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY competitors.py competitor_db.py competitors.example.json ./
 COPY sql/ ./sql/
+COPY marketing/ ./marketing/
 
 ENTRYPOINT ["python", "competitors.py"]
 CMD ["--execute", "--limit-runs", "1"]
