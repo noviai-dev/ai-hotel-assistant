@@ -1,0 +1,9 @@
+*
+!Dockerfile
+!requirements.txt
+!competitors.py
+!competitor_db.py
+!competitors.example.json
+!sql/
+!sql/**
+*.log

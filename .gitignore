@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.next/
+node_modules/
+dist/
+backend/competitor_output/
+data/
+backups/
+*.log

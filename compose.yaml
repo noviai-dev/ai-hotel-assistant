@@ -1,0 +1,64 @@
+services:
+  competitors:
+    build:
+      context: ./backend
+    profiles: ["collection"]
+    restart: "no"
+    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-postgres}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+      PGDATABASE: ${POSTGRES_DB:-postgres}
+      APIFY_TOKEN: ${APIFY_TOKEN:-}
+    command: ["--execute", "--limit-runs", "1"]
+    volumes:
+      - ./backend/competitor_output:/app/competitor_output
+      - ./backend/competitors.example.json:/app/competitors.example.json:ro
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./backend/sql/002_create_tables.sql:/docker-entrypoint-initdb.d/002_create_tables.sql:ro
+      - ./backend/sql/003_daily_prices.sql:/docker-entrypoint-initdb.d/003_daily_prices.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    stop_grace_period: 60s
+
+  postgres-backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: ${POSTGRES_USER:-postgres}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+      PGDATABASE: ${POSTGRES_DB:-postgres}
+      PGCONNECT_TIMEOUT: 10
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-7}
+    entrypoint: ["/bin/sh", "/scripts/postgres-backup.sh"]
+    volumes:
+      - ./backups/postgres:/backups
+      - ./infra/postgres-backup.sh:/scripts/postgres-backup.sh:ro
+

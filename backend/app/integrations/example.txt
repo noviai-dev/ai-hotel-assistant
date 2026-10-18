@@ -1,0 +1,102 @@
+
+booking 样例url
+https://www.booking.com/searchresults.zh-cn.html?label=ja-jp-booking-desktop-RPIhzHD7r*Rvjtq9UC4zEwS655523704762%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-51481728%3Alp9198406%3Ali%3Adec%3Adm&aid=2311236&ss=%E4%BD%8F%E4%B8%80%E5%BF%83%E6%96%8B%E6%A1%A5%E5%BA%97%2C+%E5%A4%A7%E9%98%AA%2C+%E5%A4%A7%E9%98%AA%E5%BA%9C%2C+%E6%97%A5%E6%9C%AC&ssne=%E5%A4%A7%E9%98%AA&ssne_untouched=%E5%A4%A7%E9%98%AA&efdco=1&lang=zh-cn&src=searchresults&dest_id=10474892&dest_type=hotel&ac_position=0&ac_click_type=b&ac_langcode=zh&ac_suggestion_list_length=5&search_selected=true&search_pageview_id=89ab1a0307be02e7&checkin=2026-11-18&checkout=2026-11-20&group_adults=4&no_rooms=1&group_children=1&age=4&flex_window=1&nflt=price%3DJPY-16000-25000-1%3Bht_id%3D204%3Breview_score%3D80%3Bfamily_friendly_property%3D1%3Bht_id%3D201%3Bentire_place_bedroom_count%3D1%3Bmin_bathrooms%3D1%3Bdi%3D7324%3Bdi%3D7322%3Bdi%3D7088%3Bdi%3D7319%3Bdi%3D2076%3Bdi%3D2883%3Bdi%3D2829
+
+
+
+https://www.booking.com/searchresults.html?label=ja-jp-booking-desktop-RPIhzHD7r*Rvjtq9UC4zEwS655523704762%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-51481728%3Alp9198406%3Ali%3Adec%3Adm&aid=2311236&ss=%E4%BD%8F%E4%B8%80%E5%BF%83%E6%96%8B%E6%A1%A5%E5%BA%97%2C+%E5%A4%A7%E9%98%AA%2C+%E5%A4%A7%E9%98%AA%E5%BA%9C%2C+%E6%97%A5%E6%9C%AC&ssne=%E5%A4%A7%E9%98%AA&ssne_untouched=%E5%A4%A7%E9%98%AA&efdco=1&lang=zh-cn&src=searchresults&dest_id=10474892&dest_type=hotel&ac_position=0&ac_click_type=b&ac_langcode=zh&ac_suggestion_list_length=5&search_selected=true&search_pageview_id=89ab1a0307be02e7&checkin=2026-12-18&checkout=2026-12-20&group_adults=4&no_rooms=1&group_children=1&age=4&flex_window=1&nflt=price%3DJPY-16000-25000-1%3Bht_id%3D204%3Breview_score%3D80%3Bfamily_friendly_property%3D1%3Bht_id%3D201%3Bentire_place_bedroom_count%3D1%3Bmin_bathrooms%3D1%3Bdi%3D7324%3Bdi%3D7322%3Bdi%3D7088%3Bdi%3D7319%3Bdi%3D2076%3Bdi%3D2883%3Bdi%3D2829
+
+https://www.booking.com/searchresults.html?label=ja-jp-booking-desktop-RPIhzHD7r*Rvjtq9UC4zEwS655523704762%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-51481728%3Alp9198406%3Ali%3Adec%3Adm&aid=2311236&ss=%E4%BD%8F%E4%B8%80%E5%BF%83%E6%96%8B%E6%A1%A5%E5%BA%97%2C+%E5%A4%A7%E9%98%AA%2C+%E5%A4%A7%E9%98%AA%E5%BA%9C%2C+%E6%97%A5%E6%9C%AC&ssne=%E5%A4%A7%E9%98%AA&ssne_untouched=%E5%A4%A7%E9%98%AA&efdco=1&lang=zh-cn&src=searchresults&dest_id=10474892&dest_type=hotel&ac_position=0&ac_click_type=b&ac_langcode=zh&ac_suggestion_list_length=5&search_selected=true&search_pageview_id=89ab1a0307be02e7&checkin=2026-11-18&checkout=2026-11-20&group_adults=4&no_rooms=1&group_children=1&age=4&flex_window=1&nflt=price%3DJPY-16000-25000-1%3Bht_id%3D204%3Breview_score%3D80%3Bfamily_friendly_property%3D1%3Bht_id%3D201%3Bentire_place_bedroom_count%3D1%3Bmin_bathrooms%3D1%3Bdi%3D7324%3Bdi%3D7322%3Bdi%3D7088%3Bdi%3D7319%3Bdi%3D2076%3Bdi%3D2883%3Bdi%3D2829
+https://www.booking.com/searchresults.html?
+label=ja-jp-booking-desktop-RPIhzHD7r*Rvjtq9UC4zEwS655523704762%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-51481728%3Alp9198406%3Ali%3Adec%3Adm
+&aid=2311236
+&ss=%E4%BD%8F%E4%B8%80%E5%BF%83%E6%96%8B%E6%A1%A5%E5%BA%97%2C+%E5%A4%A7%E9%98%AA%2C+%E5%A4%A7%E9%98%AA%E5%BA%9C%2C+%E6%97%A5%E6%9C%AC
+&ssne=%E5%A4%A7%E9%98%AA
+&ssne_untouched=%E5%A4%A7%E9%98%AA
+&efdco=1
+&lang=zh-cn
+&src=searchresults
+&dest_id=10474892
+&dest_type=hotel
+&ac_position=0
+&ac_click_type=b
+&ac_langcode=zh
+&ac_suggestion_list_length=5
+&search_selected=true
+&search_pageview_id=89ab1a0307be02e7
+&checkin=2026-11-18
+&checkout=2026-11-20
+&group_adults=4
+&no_rooms=1
+&group_children=1
+&age=4
+&flex_window=1
+&nflt=price%3DJPY-16000-25000-1%3Bht_id%3D204%3Breview_score%3D80%3Bfamily_friendly_property%3D1%3Bht_id%3D201%3Bentire_place_bedroom_count%3D1%3Bmin_bathrooms%3D1%3Bdi%3D7324%3Bdi%3D7322%3Bdi%3D7088%3Bdi%3D7319%3Bdi%3D2076%3Bdi%3D2883%3Bdi%3D2829
+
+
+
+项目	原来的参数名	内容
+搜索住宿	ss	住一心斎橋店，大阪，大阪府，日本
+页面语言	lang	zh-cn：简体中文
+入住日期	checkin	2026 年 11 月 18 日
+退房日期	checkout	2026 年 11 月 20 日，共 2 晚
+成人数量	group_adults	4 名成人
+儿童数量	group_children	1 名儿童
+儿童年龄	age	4 岁
+房间数量	no_rooms	1 间
+价格筛选	nflt → price	JPY-16000-25000-1：16,000～25,000 日元，计价单位需以页面为准
+评分筛选	nflt → review_score	80：通常表示评分 8 分及以上
+家庭筛选	nflt → family_friendly_property	1：适合家庭的住宿
+卧室筛选	nflt → entire_place_bedroom_count	1：卧室数量筛选值为 1
+浴室筛选	nflt → min_bathrooms	1：至少 1 间浴室
+住宿类型	nflt → ht_id	类型代码：204、201
+地区筛选	nflt → di	地区代码：7324、7322、7088、7319、2076、2883、2829
+
+
+
+
+
+
+
+
+1. 核心搜索条件（行程与人数）
+ss: 住一心斋桥店, 大阪, 大阪府, 日本（搜索关键词，已 URL 编码）
+checkin: 2026-11-18（入住日期：2026年11月18日）
+checkout: 2026-11-20（退房日期：2026年11月20日）
+group_adults: 4（成人人数：4位）
+group_children: 1（儿童人数：1位）
+age: 4（儿童年龄：4岁）
+no_rooms: 1（房间数量：1间）
+flex_window: 1（弹性日期设置：允许 $\pm$ 1天浮动）
+
+2. 筛选条件（nflt 参数详解）nflt（No-Fluctuation Filter）
+包含了你在侧边栏勾选的所有过滤项：
+price=JPY-16000-25000-1: 
+价格区间为每晚 16,000 ~ 25,000 日元
+review_score=80: 评分 8.0 分以上（“非常好”）
+family_friendly_property=1: 勾选了“适合家庭入住”
+ht_id=204 & ht_id=201: 住宿类型筛选（如酒店、公寓等分类代码）
+entire_place_bedroom_count=1: 至少 1 间卧室
+min_bathrooms=1: 至少 1 间浴室
+
+di=7324;di=7322...: 勾选的具体区域/商圈代码（如心斋桥、难波、中央区等）
+
+3. 页面语言与显示控制lang: zh-cn（语言设置为简体中文）
+ssne / ssne_untouched: 大阪（未修饰的城市搜索基准）
+dest_id: 10474892（Booking 数据库中该酒店/地点的唯一 ID）
+
+dest_type: hotel（目标类型为酒店）
+src: searchresults（请求来源为搜索结果页）
+
+4. 自动补全与交互参数ac_position: 0
+（在下拉自动补全菜单中点了第 1 个建议）
+ac_click_type: b（点击类型标记）
+ac_langcode: zh（自动补全使用的语言代码）
+ac_suggestion_list_length: 5（自动补全弹出的建议列表长度）
+search_selected: true（表示用户通过点击下拉建议发起了搜索）
+search_pageview_id: 89ab1a0307be02e7（用于追踪本次搜索会话的唯一标识码）
+
+5. 渠道与追踪参数
+aid: 2311236（联盟营销/渠道 ID，用以追踪订单来源）
+label: ja-jp-booking-desktop-...（广告投放或营销来源的追踪标签，包含匹配关键词、设备类型等信息）
+efdco: 1（前端页面渲染或实验组控制标记）
