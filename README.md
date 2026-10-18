@@ -27,10 +27,12 @@ chmod +x bin/start.sh bin/stop.sh
 ```
 
 运行前先在根目录 `.env` 配置 `POSTGRES_PASSWORD` 和 `APIFY_TOKEN`。
-`start.sh` 执行 `docker compose up -d`，并在当前用户的 crontab 注册每天 **05:00**
-执行 `docker compose run --build --rm competitors`，按部署机器本地时区计算
+`start.sh` 启动基础服务、初始化营销报告/邮件表，并在当前用户的 crontab 注册每天 **05:00**
+执行竞品采集、每天 **09:00** 执行 `docker compose run --build --rm -T marketing run`，生成报告后发送邮件。按部署机器本地时区计算
 （日本时间请将机器时区设为 `Asia/Tokyo`）。重复启动会更新本项目的任务，不会重复添加。
-采集日志追加到 `logs/competitors.log`；启动时不会立即采集，机器关闭期间错过的任务不会补跑。
+采集日志追加到 `logs/competitors.log`，营销和邮件日志追加到 `logs/marketing.log`；启动时不会立即采集或分析，机器关闭期间错过的任务不会补跑。
+需在 `.env` 配置营销模型、酒店、SMTP参数及 `MARKETING_EMAIL_ENABLED=true`。
+脚本会停止已有常驻营销worker，避免与cron重复调度；cron的09:00不受 `MARKETING_HOUR` 影响。
 请使用同一用户执行两个脚本；该用户需有 Docker 权限，cron 执行时 Docker 也必须运行。
 `stop.sh` 会停止包含采集任务在内的 Compose 容器，保留数据库和备份文件。
 

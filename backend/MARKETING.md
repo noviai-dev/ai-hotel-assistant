@@ -83,6 +83,11 @@ cd backend
 
 ## 每日邮件
 
+使用项目 `bin/start.sh` 时，由系统cron在每天主机时间09:00执行一次 `marketing run`，随后发送邮件。
+日本时间请将主机时区设为Asia/Tokyo。脚本自动初始化报告与邮件表，并停止常驻marketing调度服务；
+无需另外启动 `marketing schedule`。日志为 `logs/marketing.log`，`bin/stop.sh` 同时移除采集和营销定时任务。
+下文常驻worker命令是另一种运行方式，不要与start.sh的cron同时启用。
+
 根目录 `.env` 已补充邮件参数空值，不覆盖已有设置。填写：
 
 ```dotenv
