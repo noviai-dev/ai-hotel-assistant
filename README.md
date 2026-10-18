@@ -21,6 +21,7 @@ Linux / WSL 部署可使用启动与停止脚本（需要 Bash、Docker Compose 
 
 ```bash
 chmod +x bin/start.sh bin/stop.sh
+# nohup ./bin/start.sh > start.log 2>&1 &
 ./bin/start.sh
 # 停止服务并移除定时任务
 ./bin/stop.sh
