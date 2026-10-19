@@ -45,7 +45,6 @@ class Settings:
             smtp_password=os.getenv("SMTP_PASSWORD", ""),
         )
         if not result.hotel:
-            raise ValueError("请设置 MARKETING_HOTEL，与 collection_batches.own_hotel 完全一致")
         if not 0 <= result.hour <= 23 or not 1 <= result.horizon_days <= 366 or not 1 <= result.freshness_days <= 90:
             raise ValueError("营销分析时间或窗口配置无效")
         ZoneInfo(result.timezone)

@@ -6,4 +6,8 @@
 !competitors.example.json
 !sql/
 !sql/**
+!marketing/
+!marketing/**
+**/__pycache__/
+**/*.py[cod]
 *.log
