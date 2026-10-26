@@ -9,3 +9,5 @@ backend/competitor_output/
 data/
 backups/
 *.log
+.pem
+.bak
