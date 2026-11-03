@@ -56,7 +56,7 @@ python -m marketing run
 python -m marketing latest
 ```
 
-先配置 `.env` 中的 `MARKETING_HOTEL`、本地 `PG*` 变量，以及正式分析需要的 `OPENAI_API_KEY`、`OPENAI_MODEL`。
+先配置 `.env` 中的 `MARKETING_HOTEL`、本地 `PG*` 变量，以及正式分析需要的 `OPENAI_API_KEY`、`OPENAI_MODEL`。正式营销分析会同时读取数据库报价并使用 Responses API 网页搜索，结果包含联网来源链接。
 目前入口为 CLI/定时 worker，没有启动 HTTP 服务。完整命令、报告结构和限制见 [营销服务说明](backend/MARKETING.md)。
 已有数据库先执行 `docker compose run --build --rm marketing init-db` 创建 `a_marketing_reports` 报告表。
 Docker 启动定时分析：`docker compose --profile marketing up -d --build marketing`，默认每天日本时间 09:00 执行。

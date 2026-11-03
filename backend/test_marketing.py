@@ -1,10 +1,10 @@
-"""读取项目 .env，使用真实 PostgreSQL 和大模型生成一次营销建议。
+"""读取项目 .env，使用真实 PostgreSQL 和大模型生成并可邮件发送营销建议。
 
 从项目根目录运行：
     .venv/Scripts/python backend/test_marketing.py
 
 这是实际调用 API 的集成测试，不使用 mock。普通 unittest discover 会跳过，
-直接运行此文件才启用。只读取报价并输出建议，不保存报告或发送邮件。
+直接运行此文件才启用。运行会保存已验证的建议；启用邮件配置后发送邮件。
 """
 
 import json
@@ -12,11 +12,13 @@ import os
 import sys
 import unittest
 from datetime import datetime
+from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 from marketing.advisor import Advice, generate
 from marketing.config import Settings
-from marketing.repository import load_snapshot
+from marketing.mailer import send_report
+from marketing.repository import ReportStore, load_snapshot
 
 
 class MarketingAdviceTest(unittest.TestCase):
@@ -49,7 +51,9 @@ class MarketingAdviceTest(unittest.TestCase):
         self.assertTrue(advice.summary.strip(), "营销摘要不能为空")
         self.assertGreaterEqual(len(advice.recommendations), 1, "模型未生成营销建议")
         self.assertLessEqual(len(advice.recommendations), 5)
-        valid_ids = {group["evidence_id"] for group in snapshot["groups"]}
+        valid_ids = ({group["evidence_id"] for group in snapshot["groups"]}
+                     | {change["evidence_id"] for change in snapshot.get("price_changes", [])}
+                     | {source["evidence_id"] for source in result.get("web_sources", [])})
         for recommendation in advice.recommendations:
             with self.subTest(title=recommendation.title):
                 self.assertTrue(recommendation.evidence_ids)
@@ -60,6 +64,27 @@ class MarketingAdviceTest(unittest.TestCase):
         print("\n营销建议（待人工审核）：", flush=True)
         print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
 
+        if settings.email_enabled:
+            # 复用正式报告邮件流程，邮件带完整 JSON 附件并记录发送状态。
+            store = ReportStore(settings.hotel)
+            store.initialize()
+            run_key = f"{settings.hotel}:{now.date()}:test:{uuid4()}"
+            payload = {
+                "model": settings.model,
+                "prompt_version": "2",
+                "review_status": "pending",
+                "snapshot": snapshot,
+                **result,
+            }
+            if not store.claim(run_key):
+                self.fail("无法创建本次测试营销报告")
+            store.save(run_key, "succeeded", payload)
+            email_status = send_report(settings, run_key)
+            self.assertEqual(email_status, "sent", f"邮件未发送：{email_status}")
+            print(f"\n邮件已由 SMTP 接受：{settings.email_to}", flush=True)
+        else:
+            print("\n邮件未发送：MARKETING_EMAIL_ENABLED 未设为 true。", flush=True)
+
 
 if __name__ == "__main__":
     for stream in (sys.stdout, sys.stderr):
@@ -67,3 +92,4 @@ if __name__ == "__main__":
             stream.reconfigure(encoding="utf-8")
     MarketingAdviceTest.live_enabled = True
     unittest.main(verbosity=2)
+

@@ -20,17 +20,16 @@ def run_once(settings, *, dry_run=False, force=False, now=None):
     if not store.claim(key):
         return {"run_key": key, "status": "already_exists",
                 "email_status": send_report(settings, key) if not dry_run else "disabled"}
-    payload = {"model": settings.model, "prompt_version": "1", "review_status": "pending"}
+    payload = {"model": settings.model, "prompt_version": "2", "review_status": "pending"}
     try:
         snapshot = load_snapshot(settings, now)
         payload["snapshot"] = snapshot
-        if not snapshot["groups"]:
-            status = "no_data"
-        elif dry_run:
+        if dry_run:
             status = "preview"
         else:
+            # Web research remains useful when the database has no fresh quotes.
             payload.update(generate(settings, snapshot))
-            status = "succeeded"
+            status = "succeeded" if snapshot["groups"] else "no_data"
         store.save(key, status, payload)
     except Exception as exc:
         # Do not persist upstream messages which may include credentials or raw data.

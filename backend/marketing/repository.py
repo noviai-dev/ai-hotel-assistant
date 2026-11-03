@@ -38,6 +38,34 @@ def load_snapshot(settings, now):
             ORDER BY stay_date, adults, children_ages, rooms_requested
             LIMIT 501
         """, (settings.hotel, start, end, cutoff, now)).fetchall()
+        change_rows = conn.execute("""
+            WITH ranked AS (
+                SELECT p.hotel_key, p.stay_date, p.adults, p.children_ages,
+                       p.rooms_requested, p.nightly_jpy, p.collected_at,
+                       row_number() OVER (
+                           PARTITION BY p.hotel_key, p.stay_date, p.adults,
+                                        p.children_ages, p.rooms_requested
+                           ORDER BY p.collected_at DESC, p.id DESC
+                       ) AS recency
+                FROM daily_hotel_prices p
+                JOIN collection_batches b ON b.id=p.batch_id
+                JOIN collection_queries q ON q.id=p.query_id
+                WHERE b.own_hotel=%s AND b.status='succeeded' AND q.status='stored'
+                  AND p.stay_date >= %s AND p.stay_date < %s
+                  AND p.collected_at >= %s AND p.collected_at <= %s
+                  AND p.nightly_jpy > 0 AND p.currency='JPY'
+            )
+            SELECT hotel_key, stay_date, adults, children_ages, rooms_requested,
+                   max(nightly_jpy) FILTER (WHERE recency=1),
+                   max(nightly_jpy) FILTER (WHERE recency=2),
+                   max(collected_at) FILTER (WHERE recency=1),
+                   max(collected_at) FILTER (WHERE recency=2)
+            FROM ranked WHERE recency <= 2
+            GROUP BY hotel_key, stay_date, adults, children_ages, rooms_requested
+            HAVING count(*)=2
+            ORDER BY stay_date, hotel_key, adults, children_ages, rooms_requested
+            LIMIT 501
+        """, (settings.hotel, start, end, cutoff, now)).fetchall()
     if len(rows) > 500:
         raise ValueError("报价分组超过500，请缩短 MARKETING_HORIZON_DAYS")
     groups = [dict(evidence_id=f"price-{i:03d}", stay_date=str(r[0]), adults=r[1],
@@ -45,10 +73,20 @@ def load_snapshot(settings, now):
                    min_jpy=float(r[5]), median_jpy=float(r[6]), max_jpy=float(r[7]),
                    oldest_observation=r[8].isoformat(), newest_observation=r[9].isoformat())
               for i, r in enumerate(rows, 1)]
+    if len(change_rows) > 500:
+        raise ValueError("价格变动分组超过500，请缩短 MARKETING_HORIZON_DAYS")
+    price_changes = [dict(evidence_id=f"change-{i:03d}", competitor=r[0], stay_date=str(r[1]),
+                          adults=r[2], children_ages=r[3], rooms=r[4], latest_jpy=float(r[5]),
+                          previous_jpy=float(r[6]), change_jpy=float(r[5]) - float(r[6]),
+                          change_percent=round((float(r[5]) / float(r[6]) - 1) * 100, 2),
+                          latest_observation=r[7].isoformat(), previous_observation=r[8].isoformat())
+                     for i, r in enumerate(change_rows, 1)]
     return dict(own_hotel=settings.hotel, as_of=now.isoformat(), currency="JPY",
                 window_start=str(start), window_end_exclusive=str(end), groups=groups,
+                price_changes=price_changes,
                 limitations=["仅包含成功采集批次中的近期单晚报价，缺报价不等于售罄。",
                              "报价不代表成交价，税费与房型可比性、实际入住容量仍需核对。",
+                             "只有同一竞品、入住日期及入住条件的至少两次采集报价才纳入价格变动；采集间隔和可比房型仍需核实。",
                              "未接入本店订单、库存、成本、营销预算和活动效果，不能计算入住率、利润或营销ROI。",
                              "分组为同入住日、成人数、儿童年龄及房间数；不能跨组直接比较。"])
 

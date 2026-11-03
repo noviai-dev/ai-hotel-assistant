@@ -22,6 +22,10 @@ def build_message(settings, report):
                            ("时间", "timing"), ("验证方式", "validation"), ("置信度", "confidence")]:
             lines.append(f"{label}：{item[key]}")
         lines += ["证据：" + ", ".join(item["evidence_ids"]), "约束：" + "；".join(item["constraints"])]
+    sources = payload.get("web_sources", [])
+    if sources:
+        lines += ["", "联网来源："]
+        lines += [f"[{source['evidence_id']}] {source['title']} — {source['url']}" for source in sources]
     lines += ["", "数据限制：", *snapshot.get("limitations", []), *advice.get("missing_data", [])]
     msg = EmailMessage()
     msg["Subject"] = f"酒店营销日报 | {settings.hotel} | {snapshot.get('as_of', '')[:10]}"
