@@ -25,13 +25,22 @@ quote() { printf "'%s'" "${1//\'/\'\\\'\'}"; }
 JOB="cd $(quote "$ROOT_DIR") && PATH=$(quote "$PATH") $(quote "$DOCKER") compose run --build --rm competitors >> $(quote "$ROOT_DIR/logs/competitors.log") 2>&1"
 # Cron treats percent signs specially, even inside shell quotes.
 JOB="${JOB//%/\\%}"
+MARKETING_JOB="cd $(quote "$ROOT_DIR") && PATH=$(quote "$PATH") $(quote "$DOCKER") compose run --build --rm -T marketing run >> $(quote "$ROOT_DIR/logs/marketing.log") 2>&1"
+MARKETING_JOB="${MARKETING_JOB//%/\\%}"
 
 mkdir -p logs
 "$DOCKER" compose up -d
+# Use cron as the only scheduler, including when migrating from the worker service.
+"$DOCKER" compose --profile marketing stop marketing
+# Apply additive report/email migrations to existing databases before scheduling.
+"$DOCKER" compose run --build --rm -T marketing init-db
 {
     printf '%s\n' "$CURRENT_CRON" | awk -v marker="$MARKER" 'index($0, marker) == 0'
     printf '0 5 * * * %s %s\n' "$JOB" "$MARKER"
+    printf '0 9 * * * %s %s\n' "$MARKETING_JOB" "$MARKER"
 } | crontab -
 
-echo 'Compose started; competitors scheduled daily at 05:00 (host timezone).'
+echo 'Compose started; competitors at 05:00, marketing analysis and email at 09:00 daily (host timezone).'
 echo "Logs: $ROOT_DIR/logs/competitors.log"
+echo "Logs: $ROOT_DIR/logs/marketing.log"
+echo 'Email requires MARKETING_EMAIL_ENABLED=true and SMTP settings in .env. For Japan time, set the host timezone to Asia/Tokyo.'
