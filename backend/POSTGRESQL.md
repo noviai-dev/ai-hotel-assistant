@@ -39,7 +39,7 @@ $env:PGPASSWORD = '123456'
 $env:PGDATABASE = 'postgres'
 ```
 
-程序会连接维护库 `postgres`（可通过 `PGMAINTENANCE_DB` 修改），检查 `PGDATABASE` 指定的数据库。不存在时通过 `sql/001_create_database.sql` 创建，随后连接目标库执行002、003初始化表和视图。数据库归当前 `PGUSER` 所有；首次建库需要该用户具有 `CREATEDB` 权限。运行：
+程序会连接维护库 `postgres`（可通过 `PGMAINTENANCE_DB` 修改），检查 `PGDATABASE` 指定的数据库。不存在时通过 `sql/001_create_database.sql` 创建，随后连接目标库执行002、003、006初始化表和视图。数据库归当前 `PGUSER` 所有；首次建库需要该用户具有 `CREATEDB` 权限。运行：
 
 ```powershell
 .\.venv\Scripts\python.exe competitors.py --init-db
@@ -50,6 +50,7 @@ $env:PGDATABASE = 'postgres'
 ```powershell
 psql -h localhost -p 5432 -U postgres -d postgres -v ON_ERROR_STOP=1 -c "SET search_path TO public" -f sql/002_create_tables.sql
 psql -h localhost -p 5432 -U postgres -d postgres -v ON_ERROR_STOP=1 -c "SET search_path TO public" -f sql/003_daily_prices.sql
+psql -h localhost -p 5432 -U postgres -d postgres -v ON_ERROR_STOP=1 -c "SET search_path TO public" -f sql/006_self_quotes.sql
 ```
 
 抓取：
@@ -63,7 +64,7 @@ $env:APIFY_TOKEN = '你的Apify token'
 
 ## 数据关系
 
-`collection_batches` 1→N `collection_queries` 1→N `hotel_quotes`。
+`collection_batches` 1→N `collection_queries` 1→N `hotel_quotes`。`self_quotes`单独保存本店手动维护或从自有渠道录入的报价快照，不依赖竞品采集批次。
 
 ### collection_batches：一次命令执行
 
@@ -119,6 +120,29 @@ $env:APIFY_TOKEN = '你的Apify token'
 | raw_data | JSONB | 完整上游酒店原始记录 |
 
 时间使用TIMESTAMPTZ；展示时转换日本时区。价格使用NUMERIC防止浮点累加误差。日期、酒店历史及匹配价格有索引。
+
+### self_quotes：本店报价快照
+
+定义位于独立的`sql/006_self_quotes.sql`，不放在竞品的基础表脚本中。字段沿用`hotel_quotes`中的入住日期、晚数、人数、房间数、币种及总价/每晚价格等维度；另记录房型、套餐、税费说明、来源和原始数据。每次价格调整或重新录入都新增一条记录，不覆盖历史。`nightly_jpy`和`stay_total_jpy`未知时保持NULL。运行`competitors.py --init-db`会安全创建此表及索引；该初始化不会删除已有报价。
+
+```sql
+INSERT INTO self_quotes (
+    hotel_name, check_in, check_out, nights, adults, children_ages,
+    total_guests, rooms_requested, currency, nightly_jpy, stay_total_jpy,
+    room_type, rate_plan, tax_inclusion, source, notes
+) VALUES (
+    'NOVI Dotonbori', DATE '2026-11-11', DATE '2026-11-12', 1, 2, ARRAY[]::smallint[],
+    2, 1, 'JPY', 18000, 18000,
+    'Double Room', 'Standard', 'included', 'manual', NULL
+);
+
+-- 查看本店同一入住日/人数条件的最新报价
+SELECT hotel_name, check_in, check_out, adults, children_ages,
+       nightly_jpy, stay_total_jpy, room_type, rate_plan, collected_at
+FROM self_quotes
+WHERE check_in = DATE '2026-11-11' AND adults = 2
+ORDER BY collected_at DESC;
+```
 
 ## 查询示例
 

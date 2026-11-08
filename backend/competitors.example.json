@@ -15,6 +15,6 @@
   "center": null,
   "radius_km": 3,
   "max_results": 400,
-  "max_charge_usd_per_run": 0.5,
-  "actor_timeout_seconds": 3600
+  "max_charge_usd_per_run": 1.5,
+  "actor_timeout_seconds": 6000
 }

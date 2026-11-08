@@ -44,7 +44,7 @@ def build_plan(config):
         raise ValueError("价格区间无效")
     if not 1 <= config["max_results"] <= 1000 or config["max_charge_usd_per_run"] <= 0:
         raise ValueError("结果上限或费用上限无效")
-    if not 1 <= config["actor_timeout_seconds"] <= 3600 or config["radius_km"] <= 0:
+    if not 1 <= config["actor_timeout_seconds"] <= 9000 or config["radius_km"] <= 0:
         raise ValueError("超时时间或半径无效")
     center = config.get("center")
     if center is not None and (len(center) != 2 or not -90 <= center[0] <= 90 or not -180 <= center[1] <= 180):
