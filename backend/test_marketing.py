@@ -52,7 +52,8 @@ class MarketingAdviceTest(unittest.TestCase):
         self.assertGreaterEqual(len(advice.recommendations), 1, "模型未生成营销建议")
         self.assertLessEqual(len(advice.recommendations), 5)
         valid_ids = ({group["evidence_id"] for group in snapshot["groups"]}
-                     | {change["evidence_id"] for change in snapshot.get("price_changes", [])}
+                     | {history["evidence_id"] for history in snapshot.get("price_history", [])}
+                     | {comparison["evidence_id"] for comparison in snapshot.get("self_price_comparisons", [])}
                      | {source["evidence_id"] for source in result.get("web_sources", [])})
         for recommendation in advice.recommendations:
             with self.subTest(title=recommendation.title):

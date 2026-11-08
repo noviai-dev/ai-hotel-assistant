@@ -1,6 +1,6 @@
 # 酒店 AI 助手项目骨架
 
-面向酒店经营团队的模块化 AI 助手。竞品采集由 `backend/competitors.py` 负责；营销分析由独立的 Python + OpenAI API worker 负责，支持定时读取数据库和保存建议。GEO、客服和前端仍为规划或占位，营销建议需人工审核。
+面向酒店经营团队的模块化 AI 助手。竞品采集由 `backend/competitors.py` 负责；营销分析由独立的 Python + OpenAI API worker 负责，支持定时读取数据库和保存建议。前端已提供 Vue 日期页面；GEO、客服仍为规划或占位，营销建议需人工审核。
 
 ## 模块
 
@@ -12,7 +12,7 @@
 
 - API：Python 3.12、FastAPI、Pydantic
 - 数据：PostgreSQL；后续异步任务可加入 Redis/Celery
-- Web：Next.js / TypeScript（前端目录为占位骨架）
+- Web：Vue 3 / Vite / Vue Router（日期页面，启动方式见 [前端说明](frontend/README.md)）
 - 部署：Docker Compose（本地开发），生产部署方式待定
 
 ## 本地启动
@@ -66,7 +66,7 @@ Docker 启动定时分析：`docker compose --profile marketing up -d --build ma
 ```text
 backend/app/       API、配置、模块服务与外部适配器
 backend/marketing/ 指标查询、OpenAI建议、报告存储与定时worker
-frontend/          Next.js 前端结构占位
+frontend/          Vue 日期前端
 infra/             本地开发基础设施
  docs/              需求、架构、数据模型、API 与路线图
 ```

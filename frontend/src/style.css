@@ -1,0 +1,62 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1e293b;
+  background: #f1f5f9;
+  font-synthesis: none;
+}
+
+body { margin: 0; min-width: 320px; }
+#app { min-height: 100vh; display: grid; place-items: center; padding: 32px 0; box-sizing: border-box; }
+.date-card {
+  box-sizing: border-box;
+  width: min(96%, 1800px);
+  padding: 40px 24px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 8px 32px #0f172a0d;
+  text-align: center;
+}
+h1 { margin: 0 0 20px; font-size: 20px; }
+time { font-size: clamp(28px, 7vw, 44px); font-variant-numeric: tabular-nums; }
+nav { display: flex; justify-content: center; gap: 24px; margin-top: 28px; }
+a { color: #2563eb; }
+
+.hotel-sections { margin-top: 40px; text-align: left; }
+.hotel-section { padding: 24px; border: 1px solid var(--hotel-border); border-top: 6px solid var(--hotel-accent); border-radius: 16px; background: var(--hotel-background); }
+.hotel-section--novi-dotonbori { --hotel-accent: #1d4ed8; --hotel-border: #bfdbfe; --hotel-background: #eff6ff; --hotel-heading: #dbeafe; }
+.hotel-section--zhuyi { --hotel-accent: #0f766e; --hotel-border: #99f6e4; --hotel-background: #f0fdfa; --hotel-heading: #ccfbf1; }
+.hotel-section + .hotel-section { margin-top: 56px; }
+.hotel-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: -24px -24px 24px; padding: 24px; border-bottom: 1px solid var(--hotel-border); background: var(--hotel-heading); }
+.hotel-heading h2 { margin: 0; color: var(--hotel-accent); font-size: 30px; }
+.hotel-number { padding: 7px 12px; border-radius: 6px; background: var(--hotel-accent); color: #fff; font-size: 13px; font-weight: 600; }
+.price-module { padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; }
+.price-module + .price-module { margin-top: 24px; }
+.price-module h3 { margin: 0; font-size: 21px; }
+.module-label { margin-left: 8px; color: #64748b; font-size: 15px; font-weight: 400; }
+.chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.chart-heading p { margin: 8px 0 0; color: #64748b; font-size: 14px; }
+.chart-heading button { padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; cursor: pointer; font: inherit; }
+.chart-heading button:hover { background: #f1f5f9; }
+.chart-heading button:focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+.chart-meta { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin: 20px 0 8px; color: #64748b; font-size: 13px; }
+.chart-scroll { overflow-x: auto; }
+.chart-canvas { min-width: 560px; min-height: 280px; }
+.comparison-note { color: #64748b; font-size: 14px; line-height: 1.7; }
+.price-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
+.comparison-view { min-width: 0; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px; }
+.comparison-view h4 { margin: 0; font-size: 18px; }
+.comparison-tooltip { padding: 4px; text-align: left; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.comparison-tooltip-records { max-height: 320px; overflow-y: auto; margin-top: 8px; }
+
+@media (max-width: 900px) {
+  .price-charts { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .date-card { padding: 28px 12px; }
+  .hotel-section { padding: 16px 10px; }
+  .hotel-heading { margin: -16px -10px 16px; padding: 20px 14px; }
+  .price-module { padding: 18px 12px; }
+  .comparison-view { padding: 14px 10px; }
+  .hotel-heading h2 { font-size: 23px; }
+}

@@ -16,6 +16,7 @@ class Settings:
     hour: int = 9
     horizon_days: int = 60
     freshness_days: int = 7
+    history_days: int = 30
     email_enabled: bool = False
     email_to: str = ""
     email_from: str = ""
@@ -27,7 +28,7 @@ class Settings:
 
     @classmethod
     def load(cls):
-        load_dotenv(ROOT / ".env", override=False)
+        load_dotenv(ROOT / ".env", override=True)
         result = cls(
             hotel=os.getenv("MARKETING_HOTEL", "").strip(),
             model=os.getenv("OPENAI_MODEL", "").strip(),
@@ -35,6 +36,7 @@ class Settings:
             hour=int(os.getenv("MARKETING_HOUR", "9")),
             horizon_days=int(os.getenv("MARKETING_HORIZON_DAYS", "60")),
             freshness_days=int(os.getenv("MARKETING_FRESHNESS_DAYS", "7")),
+            history_days=int(os.getenv("MARKETING_HISTORY_DAYS", "30")),
             email_enabled=os.getenv("MARKETING_EMAIL_ENABLED", "false").lower() == "true",
             email_to=os.getenv("MARKETING_EMAIL_TO", "").strip(),
             email_from=os.getenv("MARKETING_EMAIL_FROM", "").strip(),
@@ -45,9 +47,11 @@ class Settings:
             smtp_password=os.getenv("SMTP_PASSWORD", ""),
         )
         if not result.hotel:
-            raise ValueError("请设置 MARKETING_HOTEL")
+            raise ValueError("请设置 MARKETING_HOTEL，与 collection_batches.own_hotel 完全一致, 当前:" , result.hotel, "。")
         if not 0 <= result.hour <= 23 or not 1 <= result.horizon_days <= 366 or not 1 <= result.freshness_days <= 90:
             raise ValueError("营销分析时间或窗口配置无效")
+        if not 1 <= result.history_days <= 366:
+            raise ValueError("MARKETING_HISTORY_DAYS 必须在1到366之间")
         ZoneInfo(result.timezone)
         if result.email_enabled:
             result.validate_email()

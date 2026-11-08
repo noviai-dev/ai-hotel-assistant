@@ -10,30 +10,21 @@ from .repository import ReportStore
 
 
 def build_message(settings, report):
+    """Deliver the AI-written body verbatim; keep structured data in the attachment."""
     payload = report["payload"]
     snapshot = payload.get("snapshot", {})
     advice = payload.get("advice", {})
-    lines = [f"酒店：{settings.hotel}", f"报告：{report['run_key']}",
-             f"数据时点：{snapshot.get('as_of', '')}", "状态：待人工审核", "",
-             advice.get("summary", "没有符合条件的近期报价，本日未生成营销建议。")]
-    for i, item in enumerate(advice.get("recommendations", []), 1):
-        lines += ["", f"{i}. {item['title']}"]
-        for label, key in [("行动", "action"), ("客群", "audience"), ("渠道", "channel"),
-                           ("时间", "timing"), ("验证方式", "validation"), ("置信度", "confidence")]:
-            lines.append(f"{label}：{item[key]}")
-        lines += ["证据：" + ", ".join(item["evidence_ids"]), "约束：" + "；".join(item["constraints"])]
-    sources = payload.get("web_sources", [])
-    if sources:
-        lines += ["", "联网来源："]
-        lines += [f"[{source['evidence_id']}] {source['title']} — {source['url']}" for source in sources]
-    lines += ["", "数据限制：", *snapshot.get("limitations", []), *advice.get("missing_data", [])]
+    # Reports generated before email_body was introduced only have a summary.
+    body = advice.get("email_body") or advice.get("summary")
+    if not isinstance(body, str) or not body.strip():
+        raise ValueError("报告缺少 AI 邮件正文，不能发送空报告")
     msg = EmailMessage()
     msg["Subject"] = f"酒店营销日报 | {settings.hotel} | {snapshot.get('as_of', '')[:10]}"
     msg["From"], msg["To"] = settings.email_from, settings.email_to
     msg["Date"] = formatdate(localtime=False)
     digest = hashlib.sha256(report["run_key"].encode()).hexdigest()
     msg["Message-ID"] = f"<{digest}@{settings.email_from.rsplit('@', 1)[1]}>"
-    msg.set_content("\n".join(lines))
+    msg.set_content(body)
     msg.add_attachment(json.dumps(report, ensure_ascii=False, indent=2).encode("utf-8"),
                        maintype="application", subtype="json", filename="marketing-report.json")
     return msg
