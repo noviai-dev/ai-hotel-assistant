@@ -48,6 +48,6 @@ sudo systemctl reload nginx
 
 此文件是 `server` 配置块，应由主配置的 `http` 块加载，不要用它覆盖 `/etc/nginx/nginx.conf`。若主配置没有加载 `/etc/nginx/conf.d/*.conf`，请在 `http` 块中加入对应的 `include`。
 
-使用域名时，将 `server_name _;` 改为实际域名；修改站点目录时同步修改 `root`。已有默认站点时，访问服务器 IP 可能命中该站点，需要调整默认站点或通过配置的域名访问。
+此配置使用 `listen 80 default_server;`，通过服务器 IPv4 地址访问时会命中本前端。若其他站点也为同一监听地址声明了 `default_server`，需移除其他站点的该标记，再执行 `nginx -t` 并重新加载，避免默认站点冲突。使用域名时，将 `server_name _;` 改为实际域名；修改站点目录时同步修改 `root`。
 
 配置已包含 Vue Router History 模式回退规则，支持直接访问和刷新 `/2026/10/10` 等路径；HTML 每次重新验证，Vite 带哈希的静态资源长期缓存，缺失资源返回 404。
