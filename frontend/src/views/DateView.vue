@@ -42,10 +42,6 @@ const date = computed(() => {
   <h1>{{ date ? (route.path === '/' ? '当前日期' : '指定日期') : '日期无效' }}</h1>
   <time v-if="date" :datetime="date.replaceAll('/', '-')">{{ date }}</time>
   <p v-else>请使用有效的日期路径，例如 /2026/10/10。</p>
-  <nav aria-label="日期导航">
-    <RouterLink to="/">今天</RouterLink>
-    <RouterLink to="/2026/10/10">2026/10/10</RouterLink>
-  </nav>
   <div v-if="date" class="hotel-sections">
     <section v-for="(hotel, index) in hotels" :key="hotel.id" class="hotel-section" :class="`hotel-section--${hotel.id}`" :aria-labelledby="`${hotel.id}-title`">
       <header class="hotel-heading">
