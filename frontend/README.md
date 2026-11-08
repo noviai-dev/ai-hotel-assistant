@@ -29,10 +29,25 @@ npm run build
 npm run preview
 ```
 
-构建产物位于 `dist/`。路由使用 HTML5 History，部署时需将非静态资源的请求回退到 `index.html`，以支持直接访问和刷新日期路径。例如 Nginx：
+## Nginx 部署
 
-```nginx
-location / {
-    try_files $uri $uri/ /index.html;
-}
+构建产物位于 `dist/`。仓库提供 `nginx.conf` 站点配置，默认监听所有 IPv4 网卡的 80 端口，站点目录为 `/var/www/ai-hotel-assistant`。无需启动 Vite，也无需转发到 5173。
+
+在安装了 Nginx 的 Linux 服务器上，从项目的 `frontend` 目录执行（构建产物也可在本地生成后上传）：
+
+```bash
+npm ci
+npm run build
+sudo mkdir -p /var/www/ai-hotel-assistant
+sudo cp -R dist/. /var/www/ai-hotel-assistant/
+sudo cp nginx.conf /etc/nginx/conf.d/ai-hotel-assistant.conf
+sudo nginx -t
+# 仅在检查成功后执行：
+sudo systemctl reload nginx
 ```
+
+此文件是 `server` 配置块，应由主配置的 `http` 块加载，不要用它覆盖 `/etc/nginx/nginx.conf`。若主配置没有加载 `/etc/nginx/conf.d/*.conf`，请在 `http` 块中加入对应的 `include`。
+
+使用域名时，将 `server_name _;` 改为实际域名；修改站点目录时同步修改 `root`。已有默认站点时，访问服务器 IP 可能命中该站点，需要调整默认站点或通过配置的域名访问。
+
+配置已包含 Vue Router History 模式回退规则，支持直接访问和刷新 `/2026/10/10` 等路径；HTML 每次重新验证，Vite 带哈希的静态资源长期缓存，缺失资源返回 404。
