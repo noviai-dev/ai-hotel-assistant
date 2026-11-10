@@ -27,7 +27,12 @@ test('home displays the local current date', async () => {
 })
 
 test('date route displays the requested date', async () => {
-  assert.ok((await render('/2026/10/10')).includes('datetime="2026-10-10">2026/10/10</time>'))
+  const html = await render('/2026/10/10')
+  assert.ok(html.includes('datetime="2026-10-10">2026/10/10</time>'))
+  assert.ok(html.includes('2026/11/09 — 2026/11/24'))
+  assert.ok(html.includes('节假日提示（模拟）'))
+  assert.ok(html.includes('尚未接入真实采集记录和节假日日历'))
+  assert.ok(!html.includes('NOVI · 酒店经营看板'))
 })
 
 test('date validation handles leap years and invalid days', async () => {

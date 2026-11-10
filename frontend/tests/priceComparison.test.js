@@ -32,7 +32,7 @@ test('only today is blue in line series; the other 6 series are gray', () => {
   assert.equal(lines.filter(line => line.color === TODAY_COLOR).length, 1)
   assert.equal(lines.filter(line => line.color === HISTORY_COLOR).length, 6)
   assert.equal(lines.at(-1).color, TODAY_COLOR)
-  assert.ok(lines.at(-1).name.includes('2026/11/08（今日）'))
+  assert.ok(lines.at(-1).name.includes('2026/11/08（当日）'))
   assert.ok(lines.every(line => line.type === 'line'))
 })
 

@@ -31,7 +31,7 @@ export function generatePriceComparison(today = new Date(), random = Math.random
 
 export function comparisonSeries(data) {
   return data?.collections.map(collection => ({
-    name: collection.name + (collection.isToday ? '（今日）' : ''),
+    name: collection.name + (collection.isToday ? '（当日）' : ''),
     color: collection.isToday ? TODAY_COLOR : HISTORY_COLOR,
     series: collection.series,
     type: 'line',
@@ -45,6 +45,6 @@ export function comparisonSeries(data) {
 export function comparisonTooltip(data, index) {
   if (!Number.isInteger(index) || !data?.dates[index]) return ''
   return `<div class="comparison-tooltip"><strong>入住日期：${formatDate(data.dates[index])}</strong><div>${data.collections.length} 次采集 · 价格（整数）</div><div class="comparison-tooltip-records">${[...data.collections].reverse().map(collection =>
-    `<div style="color:${collection.isToday ? TODAY_COLOR : HISTORY_COLOR}">采集日期：${formatDate(collection.collectedAt)}${collection.isToday ? '（今日）' : ''} · 价格：<b>${collection.series[index]}</b></div>`
+    `<div style="color:${collection.isToday ? TODAY_COLOR : HISTORY_COLOR}">采集日期：${formatDate(collection.collectedAt)}${collection.isToday ? '（当日）' : ''} · 价格：<b>${collection.series[index]}</b></div>`
   ).join('')}</div></div>`
 }

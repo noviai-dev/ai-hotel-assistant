@@ -1,19 +1,22 @@
 <script setup>
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
+import { useChartVisibility } from '../composables/useChartVisibility.js'
 import { formatMonthDay, buildCandles, MIN_PRICE, MAX_PRICE } from '../features/candlestick.js'
 import { COLLECTION_COUNT } from '../features/priceComparison.js'
 import 'vue-data-ui/style.css'
 
 const VueUiCandlestick = defineAsyncComponent(() => import('vue-data-ui/vue-ui-candlestick'))
 const props = defineProps({ data: { type: Object, default: null } })
+const canvas = ref(null)
+const visible = useChartVisibility(canvas)
 const dataset = computed(() => buildCandles(props.data))
 
 const config = {
   type: 'candlestick',
   style: {
     fontFamily: 'inherit',
-    backgroundColor: '#ffffff',
-    color: '#334155',
+    backgroundColor: '#fffdf9',
+    color: '#5a4a3e',
     width: 1000,
     height: 460,
     layout: {
@@ -25,8 +28,8 @@ const config = {
       },
       wick: { stroke: '#64748b', strokeWidth: 1.5 },
       grid: {
-        stroke: '#e2e8f0',
-        horizontalLines: { show: true, stroke: '#e2e8f0' },
+        stroke: '#e8dfd2',
+        horizontalLines: { show: true, stroke: '#e8dfd2' },
         xAxis: {
           dataLabels: {
             fontSize: 14,
@@ -63,21 +66,21 @@ const config = {
 </script>
 
 <template>
-  <section class="comparison-view" aria-label="价格 K 线图">
+  <section class="comparison-view comparison-view--range" aria-label="价格 K 线图">
     <header class="chart-heading">
       <div>
-        <h4>价格 K 线图</h4>
-        <p>开盘价 = 收盘价 = 今日采集价 · 最高 / 最低 = {{ COLLECTION_COUNT }} 次采集极值</p>
+        <h5><span class="chart-kind" aria-hidden="true">波动</span>价格 K 线图</h5>
+        <p>开盘价 = 收盘价 = 当日采集价 · 最高 / 最低 = {{ COLLECTION_COUNT }} 次采集极值</p>
       </div>
     </header>
     <div class="chart-meta">
       <span v-if="dataset.length">{{ formatMonthDay(dataset[0][0]) }} — {{ formatMonthDay(dataset.at(-1)[0]) }}</span>
       <span>价格范围：20000～40000（整数）</span>
-      <span>蓝色横线：今日采集价 · 灰色竖线：{{ COLLECTION_COUNT }} 次采集价格范围</span>
+      <span>蓝色横线：当日采集价 · 灰色竖线：{{ COLLECTION_COUNT }} 次采集价格范围</span>
     </div>
     <div class="chart-scroll">
-      <div class="chart-canvas">
-        <VueUiCandlestick v-if="dataset.length" :dataset="dataset" :config="config">
+      <div ref="canvas" class="chart-canvas">
+        <VueUiCandlestick v-if="dataset.length && visible" :dataset="dataset" :config="config">
           <template #svg="{ svg }">
             <!-- Equal open/close has zero body height; mark today's price explicitly. -->
             <g aria-hidden="true" pointer-events="none">
@@ -88,7 +91,7 @@ const config = {
             </g>
           </template>
         </VueUiCandlestick>
-        <p v-else role="status">正在生成 K 线数据…</p>
+        <p v-else-if="!dataset.length" role="status">正在生成 K 线数据…</p>
       </div>
     </div>
   </section>
